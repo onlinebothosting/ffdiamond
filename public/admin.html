@@ -4,574 +4,706 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FF Diamond Admin | Premium Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --aqua:    #5ef0f0;
+            --aqua2:   #38bdf8;
+            --crystal: #a5f3fc;
+            --gold:    #fbbf24;
+            --gold2:   #f59e0b;
+            --pink:    #f472b6;
+            --violet:  #818cf8;
+            --green:   #4ade80;
+            --red:     #f87171;
+            --orange:  #fb923c;
+            --deep:    #020917;
+            --glass1:  rgba(255,255,255,0.05);
+            --border1: rgba(255,255,255,0.08);
+            --border2: rgba(94,240,240,0.18);
         }
-
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
         body {
-            font-family: 'Rajdhani', sans-serif;
-            background: linear-gradient(135deg, #0a0a0f 0%, #0f0a1a 100%);
-            min-height: 100vh;
-            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--deep);
+            min-height: 100vh; color: #fff; overflow-x: hidden;
         }
 
-        /* Premium Background */
-        .bg-premium {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: 
-                radial-gradient(ellipse at 20% 30%, rgba(255,215,0,0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 70%, rgba(176,68,255,0.08) 0%, transparent 50%),
-                repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 8px);
+        /* ── BG ── */
+        .bg {
+            position:fixed; inset:0; z-index:0;
+            background:
+                radial-gradient(ellipse 60% 45% at 10% 5%,  rgba(56,189,248,0.13) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 40% at 90% 88%, rgba(129,140,248,0.12) 0%, transparent 55%),
+                radial-gradient(ellipse 38% 32% at 55% 45%, rgba(94,240,240,0.07) 0%, transparent 60%),
+                linear-gradient(170deg, #020917 0%, #050e22 45%, #020c1b 100%);
         }
-
-        /* Glass Container */
-        .glass-admin {
-            position: relative;
-            z-index: 1;
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 20px;
+        .caustics {
+            position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.13;
+            background:
+                radial-gradient(ellipse 26% 18% at 22% 32%, rgba(94,240,240,0.6) 0%, transparent 70%),
+                radial-gradient(ellipse 20% 15% at 72% 18%, rgba(56,189,248,0.5) 0%, transparent 70%),
+                radial-gradient(ellipse 30% 20% at 62% 76%, rgba(129,140,248,0.4) 0%, transparent 70%);
+            animation: cShift 16s ease-in-out infinite alternate;
         }
-
-        /* Login Card */
-        .login-card {
-            max-width: 420px;
-            margin: 100px auto;
-            background: rgba(10, 10, 20, 0.7);
-            backdrop-filter: blur(20px);
-            border-radius: 32px;
-            padding: 40px;
-            text-align: center;
-            border: 1px solid rgba(255,215,0,0.3);
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        @keyframes cShift {
+            0%   { transform:scale(1) rotate(0deg); }
+            50%  { transform:scale(1.04) rotate(1.1deg); }
+            100% { transform:scale(0.97) rotate(-0.7deg); }
         }
-
-        .login-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        .grid-bg {
+            position:fixed; inset:0; z-index:0; pointer-events:none;
+            background-image:
+                linear-gradient(rgba(94,240,240,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(94,240,240,0.02) 1px, transparent 1px);
+            background-size:48px 48px;
         }
+        canvas { position:fixed; inset:0; z-index:1; pointer-events:none; }
 
-        .login-card h2 {
-            font-family: 'Orbitron', monospace;
-            font-size: 24px;
-            margin-bottom: 30px;
-            letter-spacing: 2px;
-        }
-
-        .login-card input {
-            width: 100%;
-            padding: 14px 18px;
-            margin-bottom: 15px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,215,0,0.3);
-            border-radius: 12px;
-            color: white;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .login-card input:focus {
-            outline: none;
-            border-color: #FFD700;
-            background: rgba(255,215,0,0.1);
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            border: none;
-            border-radius: 40px;
-            font-family: 'Orbitron', monospace;
-            font-weight: bold;
-            font-size: 14px;
-            color: #0a0a0f;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(255,215,0,0.3);
-        }
-
-        /* Dashboard Header */
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255,215,0,0.2);
-        }
-
-        .header-title h1 {
-            font-family: 'Orbitron', monospace;
-            font-size: 28px;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .header-title p {
-            font-size: 12px;
-            opacity: 0.6;
-            margin-top: 5px;
-        }
-
-        .admin-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            background: rgba(255,255,255,0.05);
-            padding: 8px 20px;
-            border-radius: 40px;
-        }
-
-        .admin-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .logout-btn {
-            background: rgba(255,68,68,0.2);
-            border: 1px solid rgba(255,68,68,0.5);
-            padding: 8px 20px;
-            border-radius: 40px;
-            color: #ff6b6b;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: rgba(255,68,68,0.4);
-            transform: scale(1.02);
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,100,0,0.05));
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid rgba(255,215,0,0.2);
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(255,215,0,0.5);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .stat-icon {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .stat-number {
-            font-family: 'Orbitron', monospace;
-            font-size: 36px;
-            font-weight: bold;
-            color: #FFD700;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            letter-spacing: 1px;
-            opacity: 0.7;
-            margin-top: 5px;
-        }
-
-        /* Tables */
-        .claims-table-container, .logs-table-container {
-            background: rgba(10, 10, 20, 0.5);
-            backdrop-filter: blur(10px);
+        /* ── GLASS MIXIN ── */
+        .glass {
+            background: linear-gradient(145deg,
+                rgba(255,255,255,0.07) 0%,
+                rgba(255,255,255,0.03) 60%,
+                rgba(94,240,240,0.04) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(28px) saturate(1.6);
+            -webkit-backdrop-filter: blur(28px) saturate(1.6);
             border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255,215,0,0.2);
+            position:relative; overflow:hidden;
+        }
+        .glass::before {
+            content:''; position:absolute;
+            top:0; left:6%; right:6%; height:1px;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,0.28),transparent);
+            pointer-events:none;
         }
 
-        .section-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 18px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        /* ── WRAP ── */
+        .wrap {
+            position:relative; z-index:3;
+            max-width:1300px; margin:0 auto;
+            padding:28px 20px 80px;
         }
 
-        .table-wrapper {
-            overflow-x: auto;
+        /* ── INPUTS ── */
+        .inp {
+            width:100%; padding:13px 16px; border-radius:14px;
+            background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.08);
+            color:#fff; font-family:'Space Grotesk',sans-serif;
+            font-size:14px; font-weight:500; outline:none; transition:all 0.25s;
+        }
+        .inp::placeholder { color:rgba(255,255,255,0.2); }
+        .inp:focus {
+            border-color:rgba(94,240,240,0.4);
+            background:rgba(94,240,240,0.05);
+            box-shadow:0 0 0 3px rgba(94,240,240,0.07);
+        }
+        .inp-lbl {
+            font-family:'DM Mono',monospace; font-size:9px; letter-spacing:3px;
+            color:rgba(94,240,240,0.5); margin-bottom:7px;
+        }
+        .inp-wrap { margin-bottom:12px; }
+
+        /* ── BUTTONS ── */
+        .btn-primary {
+            width:100%; padding:15px; border:none; border-radius:14px;
+            background:linear-gradient(100deg,var(--aqua) 0%,var(--aqua2) 50%,var(--violet) 100%);
+            font-family:'Syne',sans-serif; font-size:14px; font-weight:700; letter-spacing:0.5px;
+            color:#020917; cursor:pointer; position:relative; overflow:hidden;
+            transition:all 0.25s;
+            box-shadow:0 8px 24px rgba(56,189,248,0.22),inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+        .btn-primary::before {
+            content:''; position:absolute; inset:0;
+            background:linear-gradient(135deg,rgba(255,255,255,0.18) 0%,transparent 50%);
+        }
+        .btn-primary:hover { transform:translateY(-2px); box-shadow:0 14px 32px rgba(56,189,248,0.28); }
+
+        /* ── LOGIN ── */
+        #loginView { display:none; }
+        .login-wrap { max-width:400px; margin:90px auto 0; }
+        .login-card { padding:38px 28px; }
+        .login-icon {
+            width:72px; height:72px; border-radius:50%; margin:0 auto 20px;
+            background:linear-gradient(135deg,rgba(94,240,240,0.15),rgba(129,140,248,0.15));
+            border:1px solid rgba(94,240,240,0.3);
+            display:flex; align-items:center; justify-content:center; font-size:28px;
+            box-shadow:0 0 30px rgba(94,240,240,0.12);
+        }
+        .login-title {
+            font-family:'Syne',sans-serif; font-size:21px; font-weight:800;
+            text-align:center; margin-bottom:6px;
+            background:linear-gradient(90deg,var(--aqua),var(--crystal));
+            -webkit-background-clip:text; background-clip:text; color:transparent;
+        }
+        .login-sub {
+            text-align:center; font-size:10px; color:rgba(255,255,255,0.3);
+            font-family:'DM Mono',monospace; letter-spacing:2px; margin-bottom:28px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        /* ── DASHBOARD ── */
+        #dashboardView { display:none; }
 
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+        /* Topbar */
+        .topbar {
+            display:flex; align-items:center; justify-content:space-between;
+            flex-wrap:wrap; gap:16px; padding:18px 22px; margin-bottom:24px;
         }
+        .topbar-left { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+        .admin-badge {
+            display:inline-flex; align-items:center; gap:6px;
+            padding:5px 14px 5px 10px; border-radius:100px;
+            background:rgba(129,140,248,0.12); border:1px solid rgba(129,140,248,0.3);
+            font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--violet);
+        }
+        .admin-dot { width:6px; height:6px; border-radius:50%; background:var(--violet); animation:aPulse 1.4s infinite; }
+        @keyframes aPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        .top-title { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; }
+        .top-title span {
+            background:linear-gradient(90deg,var(--aqua),var(--violet));
+            -webkit-background-clip:text; background-clip:text; color:transparent;
+        }
+        .top-sub { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; color:rgba(255,255,255,0.25); margin-top:2px; }
+        .topbar-right { display:flex; align-items:center; gap:12px; }
+        .admin-pill {
+            display:flex; align-items:center; gap:10px;
+            padding:8px 16px; border-radius:100px;
+            background:var(--glass1); border:1px solid var(--border2);
+        }
+        .a-ava {
+            width:30px; height:30px; border-radius:50%;
+            background:linear-gradient(135deg,rgba(129,140,248,0.3),rgba(94,240,240,0.2));
+            border:1px solid rgba(94,240,240,0.25);
+            display:flex; align-items:center; justify-content:center; font-size:14px;
+        }
+        .a-name { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:rgba(255,255,255,0.6); }
+        .logout-btn {
+            display:flex; align-items:center; gap:7px; padding:9px 16px; border-radius:100px;
+            background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.22);
+            color:var(--red); cursor:pointer; font-family:'DM Mono',monospace;
+            font-size:10px; letter-spacing:1px; transition:all 0.2s;
+        }
+        .logout-btn:hover { background:rgba(248,113,113,0.18); transform:translateY(-1px); }
 
-        th {
-            color: #FFD700;
-            font-weight: 600;
-            font-size: 12px;
-            letter-spacing: 1px;
-        }
-
-        td {
-            font-size: 13px;
-        }
-
-        .badge-diamond {
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            color: #1a1a2e;
-            display: inline-block;
-        }
-
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-        .status-pending { background: rgba(255,165,0,0.2); color: #ffa500; }
-        .status-processing { background: rgba(0,245,255,0.2); color: #00f5ff; }
-        .status-completed { background: rgba(0,255,0,0.2); color: #0f0; }
-        .status-failed { background: rgba(255,0,0,0.2); color: #f00; }
-
-        .action-btn {
-            background: none;
-            border: none;
-            color: #FFD700;
-            cursor: pointer;
-            padding: 5px 8px;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-        .action-btn:hover {
-            background: rgba(255,215,0,0.2);
-        }
-
+        /* Refresh btn */
         .refresh-btn {
-            background: rgba(255,215,0,0.2);
-            border: 1px solid rgba(255,215,0,0.3);
-            padding: 8px 16px;
-            border-radius: 40px;
-            color: #FFD700;
-            cursor: pointer;
-            font-size: 12px;
+            display:flex; align-items:center; gap:6px; padding:9px 16px; border-radius:100px;
+            background:rgba(94,240,240,0.08); border:1px solid rgba(94,240,240,0.22);
+            color:var(--aqua); cursor:pointer; font-family:'DM Mono',monospace;
+            font-size:10px; letter-spacing:1px; transition:all 0.2s; margin-left:auto;
+        }
+        .refresh-btn:hover { background:rgba(94,240,240,0.15); }
+        .refresh-btn.spinning svg { animation:spin 0.7s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        /* Stats */
+        .stats-row {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+            gap:14px; margin-bottom:24px;
+        }
+        .stat-card { padding:20px 14px; text-align:center; transition:all 0.3s; }
+        .stat-card:hover { transform:translateY(-3px); }
+        .sc-icon { font-size:22px; margin-bottom:8px; filter:drop-shadow(0 0 8px rgba(94,240,240,0.4)); }
+        .stat-num {
+            font-family:'Syne',sans-serif; font-size:28px; font-weight:800;
+        }
+        .stat-num.aqua   { background:linear-gradient(135deg,var(--aqua),var(--crystal)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .stat-num.gold   { background:linear-gradient(135deg,var(--gold),var(--gold2));   -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .stat-num.violet { background:linear-gradient(135deg,var(--violet),var(--pink));  -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .stat-num.green  { background:linear-gradient(135deg,var(--green),var(--aqua2));  -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .stat-num.orange { background:linear-gradient(135deg,var(--orange),var(--gold));  -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .stat-lbl { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:2px; color:rgba(255,255,255,0.28); margin-top:4px; }
+
+        /* Table cards */
+        .tbl-card { padding:24px 20px; margin-bottom:20px; }
+        .card-head { display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+        .card-head-icon {
+            width:30px; height:30px; border-radius:9px;
+            background:linear-gradient(135deg,rgba(94,240,240,0.18),rgba(129,140,248,0.18));
+            border:1px solid rgba(94,240,240,0.22);
+            display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
+        }
+        .card-head-title { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:3px; color:rgba(94,240,240,0.65); }
+        .card-head-line { flex:1; height:1px; background:linear-gradient(90deg,rgba(94,240,240,0.18),transparent); min-width:20px; }
+
+        .tbl-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; }
+        th {
+            font-family:'DM Mono',monospace; font-size:8.5px; letter-spacing:2px;
+            color:rgba(94,240,240,0.45); padding:10px 12px;
+            border-bottom:1px solid rgba(255,255,255,0.06); text-align:left; white-space:nowrap;
+        }
+        td {
+            padding:12px 12px; border-bottom:1px solid rgba(255,255,255,0.04);
+            font-size:12.5px; font-weight:500; color:rgba(255,255,255,0.7);
+        }
+        tr:last-child td { border-bottom:none; }
+        tbody tr:hover td { background:rgba(94,240,240,0.025); }
+
+        /* Badges */
+        .badge {
+            display:inline-flex; align-items:center; gap:4px;
+            padding:4px 10px; border-radius:100px;
+            font-family:'DM Mono',monospace; font-size:8.5px; letter-spacing:1px;
+        }
+        .badge.pending    { background:rgba(251,191,36,0.12);  border:1px solid rgba(251,191,36,0.25);  color:var(--gold); }
+        .badge.processing { background:rgba(94,240,240,0.12);  border:1px solid rgba(94,240,240,0.25);  color:var(--aqua); }
+        .badge.completed  { background:rgba(74,222,128,0.12);  border:1px solid rgba(74,222,128,0.25);  color:var(--green); }
+        .badge.failed     { background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.25); color:var(--red); }
+        .badge.login      { background:rgba(74,222,128,0.12);  border:1px solid rgba(74,222,128,0.25);  color:var(--green); }
+        .badge.logout     { background:rgba(251,191,36,0.12);  border:1px solid rgba(251,191,36,0.25);  color:var(--gold); }
+        .badge.delete     { background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.25); color:var(--red); }
+        .badge.update     { background:rgba(56,189,248,0.12);  border:1px solid rgba(56,189,248,0.25);  color:var(--aqua2); }
+
+        .diamond-chip {
+            display:inline-flex; align-items:center; gap:5px; padding:4px 11px; border-radius:100px;
+            background:linear-gradient(90deg,rgba(94,240,240,0.12),rgba(56,189,248,0.08));
+            border:1px solid rgba(94,240,240,0.2);
+            font-family:'Syne',sans-serif; font-size:12px; font-weight:700; color:var(--crystal);
+        }
+        .uid-tag {
+            font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.5px;
+            color:rgba(94,240,240,0.7); font-weight:500;
+        }
+        .ip-tag {
+            font-family:'DM Mono',monospace; font-size:10px; color:rgba(255,255,255,0.25); letter-spacing:0.5px;
+        }
+        .ts-tag { font-family:'DM Mono',monospace; font-size:10px; color:rgba(255,255,255,0.3); }
+        .name-tag { color:rgba(255,255,255,0.8); font-weight:600; }
+        .server-tag {
+            font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:rgba(255,255,255,0.4);
+        }
+        .email-tag { font-size:11px; color:rgba(129,140,248,0.7); }
+
+        /* Action buttons */
+        .act-btn {
+            width:28px; height:28px; border-radius:8px;
+            background:none; border:1px solid transparent; cursor:pointer;
+            display:inline-flex; align-items:center; justify-content:center;
+            font-size:13px; transition:all 0.2s;
+        }
+        .act-btn.complete { border-color:rgba(74,222,128,0.2); color:var(--green); }
+        .act-btn.complete:hover { background:rgba(74,222,128,0.12); }
+        .act-btn.del { border-color:rgba(248,113,113,0.2); color:var(--red); }
+        .act-btn.del:hover { background:rgba(248,113,113,0.12); }
+
+        /* Empty */
+        .empty { text-align:center; padding:44px 20px; }
+        .empty-icon { font-size:38px; margin-bottom:12px; opacity:0.3; }
+        .empty-txt { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px; color:rgba(255,255,255,0.2); }
+
+        /* Toast */
+        .toast {
+            position:fixed; bottom:28px; left:50%;
+            transform:translateX(-50%) translateY(12px);
+            padding:12px 24px; border-radius:100px; font-size:13px; font-weight:600;
+            z-index:9999; opacity:0; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            white-space:nowrap; backdrop-filter:blur(20px);
+            background:rgba(5,14,38,0.92); border:1px solid rgba(255,255,255,0.08);
+            box-shadow:0 20px 40px rgba(0,0,0,0.4);
+        }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+        .toast.success { border-color:rgba(94,240,240,0.35); color:var(--aqua); }
+        .toast.error   { border-color:rgba(248,113,113,0.35); color:var(--red); }
+
+        /* Confirm dialog */
+        .confirm-overlay {
+            display:none; position:fixed; inset:0; z-index:999;
+            background:rgba(2,9,23,0.88); backdrop-filter:blur(20px);
+            align-items:center; justify-content:center;
+        }
+        .confirm-overlay.show { display:flex; }
+        .confirm-box {
+            padding:32px 28px; text-align:center; max-width:340px; width:90%;
+        }
+        .confirm-icon { font-size:40px; margin-bottom:16px; }
+        .confirm-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; margin-bottom:8px; }
+        .confirm-sub { font-size:12px; color:rgba(255,255,255,0.4); margin-bottom:24px; font-family:'DM Mono',monospace; letter-spacing:1px; }
+        .confirm-btns { display:flex; gap:10px; }
+        .confirm-cancel {
+            flex:1; padding:12px; border-radius:12px;
+            background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+            color:rgba(255,255,255,0.5); cursor:pointer; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px;
+        }
+        .confirm-ok {
+            flex:1; padding:12px; border-radius:12px; border:none;
+            background:linear-gradient(90deg,var(--red),rgba(248,113,113,0.7));
+            color:#fff; cursor:pointer; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; font-weight:700;
         }
 
-        @media (max-width: 768px) {
-            .glass-admin { padding: 15px; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            th, td { padding: 8px 10px; font-size: 11px; }
+        /* Sparkles */
+        .sparkle {
+            position:fixed; pointer-events:none; z-index:2;
+            animation:sparkleLife var(--dur,3s) ease-in-out var(--delay,0s) infinite;
+            left:var(--x); top:var(--y);
+        }
+        .sparkle::before,.sparkle::after {
+            content:''; position:absolute; background:var(--col,rgba(94,240,240,0.7));
+            border-radius:1px; top:50%; left:50%; transform:translate(-50%,-50%);
+        }
+        .sparkle::before { width:var(--sz,8px); height:1.5px; }
+        .sparkle::after  { width:1.5px; height:var(--sz,8px); }
+        @keyframes sparkleLife {
+            0%,100%{opacity:0;transform:scale(0) rotate(0deg);}
+            20%{opacity:1;transform:scale(1) rotate(20deg);}
+            50%{opacity:0.6;transform:scale(1.2) rotate(45deg);}
+            80%{opacity:0.2;transform:scale(0.8) rotate(60deg);}
+        }
+        .fade-in { opacity:0; transform:translateY(12px); animation:fadeUp 0.45s ease forwards; }
+        @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+
+        @media(max-width:768px) {
+            .topbar { flex-direction:column; align-items:flex-start; }
+            .stats-row { grid-template-columns:repeat(2,1fr); }
+            th,td { font-size:11px; padding:8px 8px; }
         }
     </style>
 </head>
 <body>
-<div class="bg-premium"></div>
+<div class="bg"></div>
+<div class="caustics"></div>
+<div class="grid-bg"></div>
+<canvas id="c"></canvas>
 
-<div class="glass-admin" id="app">
-    <!-- Login View -->
-    <div id="loginView" style="display: none;">
-        <div class="login-card">
-            <div class="login-icon">
-                <i class="fas fa-crown"></i>
+<div class="wrap" id="app">
+
+    <!-- ── LOGIN ── -->
+    <div id="loginView">
+        <div class="login-wrap">
+            <div class="glass login-card">
+                <div class="login-icon">🛡️</div>
+                <div class="login-title">ADMIN ACCESS</div>
+                <div class="login-sub">AUTHORIZED PERSONNEL ONLY</div>
+                <div class="inp-wrap">
+                    <div class="inp-lbl">◉ USERNAME</div>
+                    <input class="inp" id="adminUsername" type="text" placeholder="Enter admin username" autocomplete="off">
+                </div>
+                <div class="inp-wrap">
+                    <div class="inp-lbl">◉ PASSWORD</div>
+                    <input class="inp" id="adminPassword" type="password" placeholder="Enter password"
+                        onkeydown="if(event.key==='Enter') adminLogin()">
+                </div>
+                <button class="btn-primary" onclick="adminLogin()">🔐 LOGIN TO ADMIN</button>
             </div>
-            <h2>ADMIN ACCESS</h2>
-            <input type="text" id="adminUsername" placeholder="Username" autocomplete="off">
-            <input type="password" id="adminPassword" placeholder="Password">
-            <button class="login-btn" onclick="adminLogin()">
-                <i class="fas fa-unlock-alt"></i> LOGIN
-            </button>
         </div>
     </div>
 
-    <!-- Dashboard View -->
-    <div id="dashboardView" style="display: none;">
-        <div class="dashboard-header">
-            <div class="header-title">
-                <h1><i class="fas fa-diamond"></i> FF DIAMOND ADMIN</h1>
-                <p>Premium Giveaway Management System</p>
-            </div>
-            <div class="admin-info">
-                <div class="admin-avatar">
-                    <i class="fas fa-user-shield"></i>
+    <!-- ── DASHBOARD ── -->
+    <div id="dashboardView">
+
+        <!-- Topbar -->
+        <div class="glass topbar fade-in">
+            <div class="topbar-left">
+                <div class="admin-badge"><div class="admin-dot"></div> ADMIN PANEL</div>
+                <div>
+                    <div class="top-title">FF DIAMOND <span>CONTROL</span></div>
+                    <div class="top-sub">PREMIUM MANAGEMENT SYSTEM</div>
                 </div>
-                <span id="adminName">Admin</span>
+            </div>
+            <div class="topbar-right">
+                <div class="admin-pill">
+                    <div class="a-ava">🛡️</div>
+                    <span class="a-name" id="adminName">ADMIN</span>
+                </div>
                 <button class="logout-btn" onclick="adminLogout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                    </svg>
+                    LOGOUT
                 </button>
             </div>
         </div>
 
-        <!-- Stats Grid -->
-        <div class="stats-grid" id="statsGrid"></div>
+        <!-- Stats -->
+        <div class="stats-row" id="statsGrid"></div>
 
         <!-- Claims Table -->
-        <div class="claims-table-container">
-            <div class="section-title">
-                <i class="fas fa-list-ul"></i> RECENT CLAIMS
-                <button class="refresh-btn" onclick="loadData()" style="margin-left: auto;">
-                    <i class="fas fa-sync-alt"></i> Refresh
+        <div class="glass tbl-card fade-in" style="animation-delay:0.1s">
+            <div class="card-head">
+                <div class="card-head-icon">📋</div>
+                <span class="card-head-title">RECENT CLAIMS</span>
+                <div class="card-head-line"></div>
+                <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                    </svg>
+                    REFRESH
                 </button>
             </div>
-            <div class="table-wrapper">
+            <div class="tbl-wrap">
                 <table>
                     <thead>
                         <tr>
                             <th>UID</th>
-                            <th>Game Name</th>
-                            <th>Diamonds</th>
-                            <th>Server</th>
-                            <th>Email</th>
-                            <th>IP Address</th>
-                            <th>Status</th>
-                            <th>Time</th>
-                            <th>Actions</th>
+                            <th>PLAYER</th>
+                            <th>DIAMONDS</th>
+                            <th>SERVER</th>
+                            <th>EMAIL / CODE</th>
+                            <th>IP ADDRESS</th>
+                            <th>STATUS</th>
+                            <th>TIME</th>
+                            <th>ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody id="claimsTableBody">
-                        <tr><td colspan="9" style="text-align: center;">Loading...</td></tr>
+                        <tr><td colspan="9"><div class="empty"><div class="empty-icon">⏳</div><div class="empty-txt">LOADING CLAIMS…</div></div></td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Admin Logs -->
-        <div class="logs-table-container">
-            <div class="section-title">
-                <i class="fas fa-history"></i> ADMIN ACTIVITY LOGS
+        <!-- Logs Table -->
+        <div class="glass tbl-card fade-in" style="animation-delay:0.18s">
+            <div class="card-head">
+                <div class="card-head-icon">📜</div>
+                <span class="card-head-title">ADMIN ACTIVITY LOGS</span>
+                <div class="card-head-line"></div>
             </div>
-            <div class="table-wrapper">
+            <div class="tbl-wrap">
                 <table>
                     <thead>
                         <tr>
-                            <th>Admin</th>
-                            <th>Action</th>
-                            <th>IP Address</th>
-                            <th>Time</th>
+                            <th>ADMIN</th>
+                            <th>ACTION</th>
+                            <th>IP ADDRESS</th>
+                            <th>TIMESTAMP</th>
                         </tr>
                     </thead>
                     <tbody id="logsTableBody">
-                        <tr><td colspan="4" style="text-align: center;">Loading...</td></tr>
+                        <tr><td colspan="4"><div class="empty"><div class="empty-icon">📜</div><div class="empty-txt">LOADING LOGS…</div></div></td></tr>
                     </tbody>
                 </table>
             </div>
+        </div>
+
+    </div><!-- /dashboardView -->
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Confirm Dialog -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="glass confirm-box">
+        <div class="confirm-icon">🗑️</div>
+        <div class="confirm-title">DELETE CLAIM?</div>
+        <div class="confirm-sub">THIS ACTION CANNOT BE UNDONE</div>
+        <div class="confirm-btns">
+            <button class="confirm-cancel" onclick="closeConfirm()">CANCEL</button>
+            <button class="confirm-ok"     id="confirmOkBtn">DELETE</button>
         </div>
     </div>
 </div>
 
 <script>
-    let isAdmin = false;
+let isAdmin = false;
+let pendingDeleteId = null;
 
-    async function checkAdmin() {
-        try {
-            const res = await fetch('/api/admin/check');
-            const data = await res.json();
-            if (data.isAdmin) {
-                isAdmin = true;
-                showDashboard();
-                loadData();
-                loadLogs();
-            } else {
-                showLogin();
-            }
-        } catch(e) {
-            showLogin();
-        }
-    }
+// ── AUTH ───────────────────────────────────────────────────────────────────
+async function checkAdmin() {
+    try {
+        const res  = await fetch('/api/admin/check');
+        const data = await res.json();
+        if (data.isAdmin) { isAdmin=true; showDash(); loadData(); loadLogs(); }
+        else showLogin();
+    } catch(e) { showLogin(); }
+}
 
-    function showLogin() {
-        document.getElementById('loginView').style.display = 'block';
-        document.getElementById('dashboardView').style.display = 'none';
-    }
+function showLogin() {
+    document.getElementById('loginView').style.display = 'block';
+    document.getElementById('dashboardView').style.display = 'none';
+}
+function showDash() {
+    document.getElementById('loginView').style.display = 'none';
+    document.getElementById('dashboardView').style.display = 'block';
+}
 
-    function showDashboard() {
-        document.getElementById('loginView').style.display = 'none';
-        document.getElementById('dashboardView').style.display = 'block';
-    }
-
-    async function adminLogin() {
-        const username = document.getElementById('adminUsername').value;
-        const password = document.getElementById('adminPassword').value;
-        
-        const res = await fetch('/api/admin/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+async function adminLogin() {
+    const username = document.getElementById('adminUsername').value.trim();
+    const password = document.getElementById('adminPassword').value.trim();
+    if (!username || !password) { showToast('❌ Enter username & password', 'error'); return; }
+    try {
+        const res  = await fetch('/api/admin/login', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({username,password})
         });
-        
         const data = await res.json();
         if (data.success) {
             isAdmin = true;
-            document.getElementById('adminName').innerHTML = `<i class="fas fa-user"></i> ${username}`;
-            showDashboard();
-            loadData();
-            loadLogs();
+            document.getElementById('adminName').textContent = username.toUpperCase();
+            showDash(); loadData(); loadLogs();
+            showToast('✅ Welcome back, ' + username, 'success');
         } else {
-            alert('❌ Invalid credentials!');
+            showToast('❌ Invalid credentials!', 'error');
         }
-    }
+    } catch(e) { showToast('🌐 Network error!', 'error'); }
+}
 
-    async function adminLogout() {
-        await fetch('/api/admin/logout', { method: 'POST' });
-        isAdmin = false;
-        showLogin();
-    }
+async function adminLogout() {
+    await fetch('/api/admin/logout', { method:'POST' });
+    isAdmin = false; showLogin();
+}
 
-    async function loadData() {
-        const res = await fetch('/api/admin/claims');
+// ── DATA ───────────────────────────────────────────────────────────────────
+const statColors = ['aqua','gold','violet','green','orange','aqua','gold','violet'];
+const statIcons  = ['📊','📅','📆','💎','💎','💎','💎','💎'];
+
+async function loadData() {
+    const btn = document.getElementById('refreshBtn');
+    if (btn) btn.classList.add('spinning');
+
+    try {
+        const res  = await fetch('/api/admin/claims');
         const data = await res.json();
-        
-        if (data.success) {
-            // Update stats
-            const stats = data.stats;
-            const diamondKeys = Object.keys(stats.byDiamond);
-            const diamondHtml = diamondKeys.map(amt => `
-                <div class="stat-card">
-                    <div class="stat-icon">💎</div>
-                    <div class="stat-number">${stats.byDiamond[amt]}</div>
-                    <div class="stat-label">${amt} Diamond Claims</div>
-                </div>
+        if (!data.success) return;
+
+        const s = data.stats;
+
+        // ── Stats ──
+        const fixedStats = [
+            { num: s.total,     lbl: 'TOTAL CLAIMS',  col: 'aqua',   icon: '📊' },
+            { num: s.today,     lbl: "TODAY'S",        col: 'gold',   icon: '📅' },
+            { num: s.thisWeek,  lbl: 'THIS WEEK',     col: 'violet', icon: '📆' },
+        ];
+        const diamondStats = Object.entries(s.byDiamond || {}).map(([amt,count],i) => ({
+            num: count, lbl: amt+' DIAMONDS', col: statColors[i+3]||'aqua', icon: '💎'
+        }));
+        const allStats = [...fixedStats, ...diamondStats];
+
+        document.getElementById('statsGrid').innerHTML = allStats.map((st,i) => `
+            <div class="glass stat-card fade-in" style="animation-delay:${0.05*i}s">
+                <div class="sc-icon">${st.icon}</div>
+                <div class="stat-num ${st.col}">${st.num}</div>
+                <div class="stat-lbl">${st.lbl}</div>
+            </div>
+        `).join('');
+
+        // ── Table ──
+        const tbody = document.getElementById('claimsTableBody');
+        if (!data.claims || data.claims.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9"><div class="empty"><div class="empty-icon">💎</div><div class="empty-txt">NO CLAIMS YET</div></div></td></tr>`;
+        } else {
+            tbody.innerHTML = data.claims.map((c,i) => `
+                <tr class="fade-in" style="animation-delay:${0.03*i}s">
+                    <td><span class="uid-tag">${c.uid}</span></td>
+                    <td><span class="name-tag">${c.gameName}</span></td>
+                    <td><span class="diamond-chip">💎 ${c.diamondAmount.toLocaleString()}</span></td>
+                    <td><span class="server-tag">${c.server||'IND'}</span></td>
+                    <td><span class="email-tag">${c.recoveryEmail}</span></td>
+                    <td><span class="ip-tag">${c.ipAddress||'N/A'}</span></td>
+                    <td><span class="badge ${c.status}">● ${c.status.toUpperCase()}</span></td>
+                    <td><span class="ts-tag">${new Date(c.claimedAt).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</span></td>
+                    <td style="white-space:nowrap">
+                        <button class="act-btn complete" title="Mark Complete" onclick="updateStatus('${c._id}','completed')">✓</button>
+                        <button class="act-btn del"      title="Delete"        onclick="confirmDelete('${c._id}')">✕</button>
+                    </td>
+                </tr>
             `).join('');
-            
-            document.getElementById('statsGrid').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-icon">📊</div>
-                    <div class="stat-number">${stats.total}</div>
-                    <div class="stat-label">Total Claims</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📅</div>
-                    <div class="stat-number">${stats.today}</div>
-                    <div class="stat-label">Today's Claims</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📆</div>
-                    <div class="stat-number">${stats.thisWeek}</div>
-                    <div class="stat-label">This Week</div>
-                </div>
-                ${diamondHtml}
-            `;
-            
-            // Update table
-            const tbody = document.getElementById('claimsTableBody');
-            if (data.claims.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No claims yet</td></tr>';
-            } else {
-                tbody.innerHTML = data.claims.map(claim => `
-                    <tr>
-                        <td><strong>${claim.uid}</strong></td>
-                        <td>${claim.gameName}</td>
-                        <td><span class="badge-diamond">${claim.diamondAmount} 💎</span></td>
-                        <td>${claim.server || 'IND'}</td>
-                        <td>${claim.recoveryEmail}</td>
-                        <td><small>${claim.ipAddress || 'N/A'}</small></td>
-                        <td><span class="status-badge status-${claim.status}">${claim.status}</span></td>
-                        <td><small>${new Date(claim.claimedAt).toLocaleString()}</small></td>
-                        <td>
-                            <button class="action-btn" onclick="updateStatus('${claim._id}', 'completed')" title="Mark Complete">
-                                <i class="fas fa-check-circle"></i>
-                            </button>
-                            <button class="action-btn" onclick="deleteClaim('${claim._id}')" title="Delete">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
-            }
         }
-    }
+    } catch(e) { console.error(e); }
+    finally { if(btn) btn.classList.remove('spinning'); }
+}
 
-    async function loadLogs() {
-        try {
-            const res = await fetch('/api/admin/logs');
-            const data = await res.json();
-            if (data.success) {
-                const tbody = document.getElementById('logsTableBody');
-                tbody.innerHTML = data.logs.map(log => `
-                    <tr>
-                        <td>${log.username}</td>
-                        <td><span class="status-badge status-${log.action}">${log.action}</span></td>
-                        <td><small>${log.ipAddress || 'N/A'}</small></td>
-                        <td><small>${new Date(log.timestamp).toLocaleString()}</small></td>
-                    </tr>
-                `).join('');
-            }
-        } catch(e) {
-            console.log('Logs not available');
+async function loadLogs() {
+    try {
+        const res  = await fetch('/api/admin/logs');
+        const data = await res.json();
+        if (!data.success) return;
+        const tbody = document.getElementById('logsTableBody');
+        if (!data.logs || data.logs.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4"><div class="empty"><div class="empty-icon">📜</div><div class="empty-txt">NO LOGS YET</div></div></td></tr>`;
+        } else {
+            tbody.innerHTML = data.logs.map((l,i) => `
+                <tr class="fade-in" style="animation-delay:${0.03*i}s">
+                    <td><span class="uid-tag">${l.username}</span></td>
+                    <td><span class="badge ${l.action}">● ${l.action.toUpperCase()}</span></td>
+                    <td><span class="ip-tag">${l.ipAddress||'N/A'}</span></td>
+                    <td><span class="ts-tag">${new Date(l.timestamp).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</span></td>
+                </tr>
+            `).join('');
         }
-    }
+    } catch(e) { console.log('Logs unavailable'); }
+}
 
-    async function updateStatus(id, status) {
+async function updateStatus(id, status) {
+    try {
         const res = await fetch(`/api/admin/claims/${id}/status`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status })
+            method:'PUT', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({status})
         });
-        if (res.ok) {
-            loadData();
-        }
+        if (res.ok) { loadData(); showToast('✅ Status updated!', 'success'); }
+    } catch(e) { showToast('❌ Update failed', 'error'); }
+}
+
+// Confirm delete
+function confirmDelete(id) {
+    pendingDeleteId = id;
+    document.getElementById('confirmOverlay').classList.add('show');
+    document.getElementById('confirmOkBtn').onclick = async () => {
+        closeConfirm();
+        await fetch(`/api/admin/claims/${pendingDeleteId}`, { method:'DELETE' });
+        pendingDeleteId = null;
+        loadData();
+        showToast('🗑️ Claim deleted', 'success');
+    };
+}
+function closeConfirm() {
+    document.getElementById('confirmOverlay').classList.remove('show');
+    pendingDeleteId = null;
+}
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+function showToast(msg, type='') {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = `toast show ${type}`;
+    setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+// ── PARTICLES ─────────────────────────────────────────────────────────────
+(function(){
+    const canvas=document.getElementById('c'), ctx=canvas.getContext('2d');
+    let W,H;
+    function resize(){ W=canvas.width=innerWidth; H=canvas.height=innerHeight; }
+    resize(); window.addEventListener('resize',resize);
+    const cols=[[94,240,240],[56,189,248],[129,140,248],[165,243,252],[251,191,36]];
+    const pts=Array.from({length:40},()=>({
+        x:Math.random()*1600,y:Math.random()*1000,
+        r:Math.random()*1.5+0.4,vx:(Math.random()-.5)*.2,
+        vy:-Math.random()*.32-.06,
+        col:cols[Math.floor(Math.random()*cols.length)],
+        a:Math.random()*.4+.1
+    }));
+    function draw(){
+        ctx.clearRect(0,0,W,H);
+        pts.forEach(p=>{
+            p.x+=p.vx; p.y+=p.vy;
+            if(p.y<-8){p.y=H+8;p.x=Math.random()*W;}
+            if(p.x<-8)p.x=W+8; if(p.x>W+8)p.x=-8;
+            ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(Math.PI/4);
+            ctx.fillStyle=`rgba(${p.col[0]},${p.col[1]},${p.col[2]},${p.a})`;
+            ctx.fillRect(-p.r,-p.r,p.r*2,p.r*2); ctx.restore();
+        });
+        requestAnimationFrame(draw);
     }
+    draw();
+})();
 
-    async function deleteClaim(id) {
-        if (confirm('Are you sure you want to delete this claim?')) {
-            await fetch(`/api/admin/claims/${id}`, { method: 'DELETE' });
-            loadData();
-        }
-    }
+// ── SPARKLES ──────────────────────────────────────────────────────────────
+const sc=['rgba(94,240,240,0.9)','rgba(56,189,248,0.8)','rgba(165,243,252,0.9)','rgba(251,191,36,0.8)','rgba(129,140,248,0.8)'];
+for(let i=0;i<16;i++){
+    const el=document.createElement('div'); el.className='sparkle';
+    const sz=(Math.random()*8+4)+'px',dur=(Math.random()*2+2.5)+'s',delay=(Math.random()*5)+'s';
+    el.style.cssText=`--x:${Math.random()*100}%;--y:${Math.random()*100}%;--sz:${sz};--dur:${dur};--delay:${delay};--col:${sc[Math.floor(Math.random()*sc.length)]}`;
+    document.body.appendChild(el);
+}
 
-    // Auto refresh every 10 seconds
-    setInterval(() => {
-        if (isAdmin) {
-            loadData();
-        }
-    }, 10000);
-
-    checkAdmin();
+// ── INIT ──────────────────────────────────────────────────────────────────
+checkAdmin();
+setInterval(()=>{ if(isAdmin){ loadData(); } }, 10000);
 </script>
 </body>
 </html>
