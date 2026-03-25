@@ -123,7 +123,7 @@ async function initializeDiamondPacks() {
             { id: 1, amount: 100, icon: '💎', stock: 48, tag: null, color: 'cyan', price: 'Free', isActive: true },
             { id: 2, amount: 310, icon: '💎💎', stock: 35, tag: null, color: 'gold', price: 'Free', isActive: true },
             { id: 3, amount: 520, icon: '💎💎💎', stock: 28, tag: 'POPULAR', color: 'purple', price: 'Free', isActive: true },
-            { id: 4, amount: 1060, icon: '🔷💎🔷', stock: 18, tag: null, color: 'gold', price: 'Free', isActive: true },
+            { id: 4, amount: 1060, icon: '🔷💎🔷', stock: 18, tag: 'MONTHLY', color: 'gold', price: 'Free', isActive: true },
             { id: 5, amount: 2180, icon: '👑💎', stock: 12, tag: 'HOT', color: 'pink', price: 'Free', isActive: true },
             { id: 6, amount: 5600, icon: '🔥👑💎', stock: 5, tag: 'ELITE', color: 'purple', price: 'Free', isActive: true }
         ];
@@ -407,7 +407,7 @@ app.get('/api/packs', async (req, res) => {
             { id: 1, amount: 100, icon: '💎', stock: 48, tag: null, color: 'cyan', price: 'Free' },
             { id: 2, amount: 310, icon: '💎💎', stock: 35, tag: null, color: 'gold', price: 'Free' },
             { id: 3, amount: 520, icon: '💎💎💎', stock: 28, tag: 'POPULAR', color: 'purple', price: 'Free' },
-            { id: 4, amount: 1060, icon: '🔷💎🔷', stock: 18, tag: null, color: 'gold', price: 'Free' },
+            { id: 4, amount: 1060, icon: '🔷💎🔷', stock: 18, tag: 'MONTHLY', color: 'gold', price: 'Free' },
             { id: 5, amount: 2180, icon: '👑💎', stock: 12, tag: 'HOT', color: 'pink', price: 'Free' },
             { id: 6, amount: 5600, icon: '🔥👑💎', stock: 5, tag: 'ELITE', color: 'purple', price: 'Free' }
         ];
