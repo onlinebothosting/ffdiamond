@@ -621,7 +621,7 @@ async function userLogin() {
                 showToast(data.message, 'error');
             } else if (data.message.includes('fill all fields')) {
                 document.getElementById('newUserFields').style.display = 'block';
-                showToast('Please enter your Game Name and Recovery Code!', 'error');
+                showToast('Please enter your Game Name and SECURITY Code!', 'error');
             } else {
                 showToast(data.message, 'error');
             }
