@@ -532,12 +532,6 @@ form.addEventListener('submit', async (e) => {
         return;
     }
 
-    // Email validation
-    if (!/^\S+@\S+\.\S+$/.test(recoveryEmail)) {
-        showToast('❌ Invalid email format!', 'error');
-        return;
-    }
-
     const btn = document.getElementById('submitBtn');
     const originalText = btn.textContent;
     btn.textContent = '⚡ PROCESSING...';
